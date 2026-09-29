@@ -9,7 +9,7 @@ An enterprise-grade recruiter workspace built with **React 19, TypeScript, and V
 ---
 
 ## 📑 Deliverables Quick Links
-- **Architecture PDF:** : Mini Hiring Panel Documents.pdf
+- **Architecture PDF:** : https://github.com/SAfsehEhsani/Mini-Hiring-Pipeline-Career-Passport-/blob/main/Mini%20Hiring%20Panel%20Documents.pdf
 - **Detailed Architecture Specification:** [ARCHITECTURE.md](ARCHITECTURE.md)
 - **AI Collaboration Logs & Prompt History:** [chat_logs/AI_COLLABORATION_LOGS.md](chat_logs/AI_COLLABORATION_LOGS.md)
 - **Automated Verification Test Suite:** [scripts/verify-all.ts](scripts/verify-all.ts)
