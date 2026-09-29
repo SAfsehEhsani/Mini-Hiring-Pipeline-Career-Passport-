@@ -58,10 +58,10 @@ async function generateArchitecturePDF() {
     borderWidth: 1,
   });
 
-  page1.drawText('GitHub Repository: https://github.com/syedafseh/mini-hiring-pipeline', {
+  page1.drawText('GitHub Repository: https://github.com/SAfsehEhsani/Mini-Hiring-Pipeline-Career-Passport-', {
     x: margin + 14,
     y: y - 18,
-    size: 9.5,
+    size: 9,
     font: fontBold,
     color: darkTextColor,
   });
