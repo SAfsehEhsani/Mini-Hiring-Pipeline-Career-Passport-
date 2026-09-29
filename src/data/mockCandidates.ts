@@ -301,5 +301,123 @@ export function getInitialCandidates(referenceDate: Date = new Date()): Candidat
         createAudit('cand-010', new Date(now - 2 * dayMs).toISOString(), 'STAGE_TRANSITION', 'Interview', 'Offer', 'Recruiter (You)', 'Formal offer package delivered.'),
       ],
     },
+
+    // 11. Ananya Gupta (Applied stage)
+    {
+      id: 'cand-011',
+      name: 'Ananya Gupta',
+      email: 'ananya.gupta@example.com',
+      phone: '+1 (555) 412-8876',
+      role: 'Staff Frontend Architect',
+      currentStage: 'Applied',
+      status: 'ACTIVE',
+      createdAt: new Date(now - 1 * dayMs).toISOString(),
+      stageEnteredAt: new Date(now - 1 * dayMs).toISOString(),
+      notes: 'Former Tech Lead at Vercel ecosystem. Core contributor to React performance tooling.',
+      tags: ['React 19', 'Next.js', 'TypeScript', 'Web Perf'],
+      auditTrail: [
+        createAudit('cand-011', new Date(now - 1 * dayMs).toISOString(), 'CANDIDATE_CREATED', null, 'Applied', 'System (Career Portal)', 'Direct application from company careers site'),
+      ],
+    },
+
+    // 12. Liam Gallagher (Applied stage)
+    {
+      id: 'cand-012',
+      name: 'Liam Gallagher',
+      email: 'liam.gallagher@example.com',
+      phone: '+1 (555) 609-3211',
+      role: 'Cloud Platform & Kubernetes Engineer',
+      currentStage: 'Applied',
+      status: 'ACTIVE',
+      createdAt: new Date(now - 3 * dayMs).toISOString(),
+      stageEnteredAt: new Date(now - 3 * dayMs).toISOString(),
+      notes: 'Built multi-region automated Kubernetes clusters with GitOps ArgoCD & Terraform.',
+      tags: ['Kubernetes', 'Terraform', 'GCP', 'ArgoCD'],
+      auditTrail: [
+        createAudit('cand-012', new Date(now - 3 * dayMs).toISOString(), 'CANDIDATE_CREATED', null, 'Applied', 'System (Job Board)', 'Applied via Indeed Tech Portal'),
+      ],
+    },
+
+    // 13. Maya Lin (Screening stage - Healthy SLA)
+    {
+      id: 'cand-013',
+      name: 'Maya Lin',
+      email: 'maya.lin@example.com',
+      phone: '+1 (555) 321-9944',
+      role: 'Senior Data Infrastructure Engineer',
+      currentStage: 'Screening',
+      status: 'ACTIVE',
+      createdAt: new Date(now - 4 * dayMs).toISOString(),
+      stageEnteredAt: new Date(now - 2 * dayMs).toISOString(),
+      notes: 'Solid Apache Flink, Kafka streaming, and ClickHouse OLAP query optimization experience.',
+      tags: ['Apache Flink', 'Kafka', 'ClickHouse', 'Python'],
+      auditTrail: [
+        createAudit('cand-013', new Date(now - 4 * dayMs).toISOString(), 'CANDIDATE_CREATED', null, 'Applied'),
+        createAudit('cand-013', new Date(now - 2 * dayMs).toISOString(), 'STAGE_TRANSITION', 'Applied', 'Screening', 'Recruiter (You)', 'Passed preliminary recruiter phone screen; awaiting hiring manager review.'),
+      ],
+    },
+
+    // 14. Tariq Al-Mansoor (Interview stage)
+    {
+      id: 'cand-014',
+      name: 'Tariq Al-Mansoor',
+      email: 'tariq.almansoor@example.com',
+      phone: '+1 (555) 753-2468',
+      role: 'Principal Distributed Systems Engineer',
+      currentStage: 'Interview',
+      status: 'ACTIVE',
+      createdAt: new Date(now - 14 * dayMs).toISOString(),
+      stageEnteredAt: new Date(now - 4 * dayMs).toISOString(),
+      notes: 'Completed technical coding & systems architecture rounds with high scores. Debrief scheduled for tomorrow.',
+      tags: ['Go', 'gRPC', 'Raft', 'Distributed Storage'],
+      auditTrail: [
+        createAudit('cand-014', new Date(now - 14 * dayMs).toISOString(), 'CANDIDATE_CREATED', null, 'Applied'),
+        createAudit('cand-014', new Date(now - 9 * dayMs).toISOString(), 'STAGE_TRANSITION', 'Applied', 'Screening'),
+        createAudit('cand-014', new Date(now - 4 * dayMs).toISOString(), 'STAGE_TRANSITION', 'Screening', 'Interview', 'Recruiter (You)', 'Advanced to full virtual on-site panel loop.'),
+      ],
+    },
+
+    // 15. Chloe Bennett (Offer stage)
+    {
+      id: 'cand-015',
+      name: 'Chloe Bennett',
+      email: 'chloe.bennett@example.com',
+      phone: '+1 (555) 987-6543',
+      role: 'Lead Security & Compliance Engineer',
+      currentStage: 'Offer',
+      status: 'ACTIVE',
+      createdAt: new Date(now - 22 * dayMs).toISOString(),
+      stageEnteredAt: new Date(now - 1 * dayMs).toISOString(),
+      notes: 'Unanimous hire feedback from engineering leadership. Formal offer letter generated and sent.',
+      tags: ['Application Security', 'Zero Trust', 'SOC2', 'K8s Security'],
+      auditTrail: [
+        createAudit('cand-015', new Date(now - 22 * dayMs).toISOString(), 'CANDIDATE_CREATED', null, 'Applied'),
+        createAudit('cand-015', new Date(now - 16 * dayMs).toISOString(), 'STAGE_TRANSITION', 'Applied', 'Screening'),
+        createAudit('cand-015', new Date(now - 8 * dayMs).toISOString(), 'STAGE_TRANSITION', 'Screening', 'Interview'),
+        createAudit('cand-015', new Date(now - 1 * dayMs).toISOString(), 'STAGE_TRANSITION', 'Interview', 'Offer', 'Recruiter (You)', 'Approved by compensation committee. Sent written offer package.'),
+      ],
+    },
+
+    // 16. David Kim (Hired stage - Success)
+    {
+      id: 'cand-016',
+      name: 'David Kim',
+      email: 'david.kim@example.com',
+      phone: '+1 (555) 654-3210',
+      role: 'Staff Database Reliability Engineer',
+      currentStage: 'Hired',
+      status: 'HIRED',
+      createdAt: new Date(now - 40 * dayMs).toISOString(),
+      stageEnteredAt: new Date(now - 12 * dayMs).toISOString(),
+      notes: 'Signed contract. Completed background check. Starting with Database Core team.',
+      tags: ['PostgreSQL', 'CockroachDB', 'High Availability', 'Linux Internals'],
+      auditTrail: [
+        createAudit('cand-016', new Date(now - 40 * dayMs).toISOString(), 'CANDIDATE_CREATED', null, 'Applied'),
+        createAudit('cand-016', new Date(now - 32 * dayMs).toISOString(), 'STAGE_TRANSITION', 'Applied', 'Screening'),
+        createAudit('cand-016', new Date(now - 21 * dayMs).toISOString(), 'STAGE_TRANSITION', 'Screening', 'Interview'),
+        createAudit('cand-016', new Date(now - 15 * dayMs).toISOString(), 'STAGE_TRANSITION', 'Interview', 'Offer'),
+        createAudit('cand-016', new Date(now - 12 * dayMs).toISOString(), 'STAGE_TRANSITION', 'Offer', 'Hired', 'Recruiter (You)', 'Offer signed and counter-signed. Welcome to the team!'),
+      ],
+    },
   ];
 }

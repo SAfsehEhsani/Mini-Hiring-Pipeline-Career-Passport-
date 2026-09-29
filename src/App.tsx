@@ -15,7 +15,7 @@ import { CandidateModal } from './components/CandidateModal';
 import { AddCandidateModal } from './components/AddCandidateModal';
 import { ArchitectureModal } from './components/ArchitectureModal';
 
-const STORAGE_KEY = 'mini_hiring_pipeline_candidates_v1';
+const STORAGE_KEY = 'mini_hiring_pipeline_candidates_v2';
 
 export function App() {
   // Initialize state from localStorage or dynamic mock data

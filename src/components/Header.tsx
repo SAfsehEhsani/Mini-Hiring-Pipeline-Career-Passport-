@@ -32,14 +32,14 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
           <div className="job-title-group">
             <h1>
-              Senior Staff Software Engineer
+              Mini Hiring Pipeline Dashboard
               <span className="live-status-pill">
                 <span className="live-status-dot" />
-                REQ #4029
+                LIVE WORKSPACE
               </span>
             </h1>
             <div className="job-subtext">
-              Recruiter Workspace • Pipeline Management &amp; Talent Discovery
+              Recruiter Workspace • End-to-End Talent Pipeline &amp; Audit Ledger
             </div>
           </div>
         </div>
