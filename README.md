@@ -16,54 +16,70 @@ An enterprise-grade recruiter workspace built with **React 19, TypeScript, and V
 
 ---
 
-## 🏃 How to Run the Application
+## 🏃 Quick Start (Clone & Run in 60 Seconds)
 
 ### Prerequisites
 - Node.js (v18+ or v22+)
 - npm (v9+ or v10+)
 
-### 1. Install Dependencies
 ```bash
-npm install
-```
+# 1. Clone repository
+git clone https://github.com/SAfsehEhsani/Mini-Hiring-Pipeline-Career-Passport-.git
+cd Mini-Hiring-Pipeline-Career-Passport-
 
-### 2. Start the Development Server
-```bash
+# 2. Install dependencies
+npm install
+
+# 3. Start development server
 npm run dev
 ```
 Open **[http://localhost:5173](http://localhost:5173)** in your browser.
 
-### 3. Run Automated Invariant & Search Verification Suite
+### 4. Run Automated Invariant & Search Verification Suite
 ```bash
 npm test
 ```
-Runs 14 automated test assertions verifying the State Machine rules, terminal outcome locks, audit trail immutability, and all 6 prompt natural language search questions.
+Runs **14/14 automated test assertions** verifying State Machine rules, terminal outcome immutability, cryptographic audit seals, and all 6 prompt natural language search questions.
 
-### 4. Build for Production
+### 5. Build for Production
 ```bash
 npm run build
 ```
 
-### 5. Re-generate Architecture PDF
+### 6. Re-generate Architecture PDF
 ```bash
 npm run generate:pdf
 ```
 
 ---
 
-## 🎯 What the Recruiter Can Do
+## 🎯 What the Recruiter Can Do (Features & Capabilities)
 
-### 1. Pipeline Management
-- **Add Candidates:** Click **"+ Add Candidate"** to introduce new candidates directly into the `Applied` stage, immediately sealing an initial creation audit entry.
-- **Stage Progression:** Move candidates forward strictly **one stage at a time** (`Applied` → `Screening` → `Interview` → `Offer` → `Hired`). Skipping stages or jumping forward is blocked at the domain layer.
-- **Terminal State Locks:** Once a candidate is `Hired` or `Rejected`, their outcome is permanently locked. Reversals or subsequent transitions are prohibited.
+### 1. Executive Dashboard & Visual Controls
+- **4 Live KPI Metric Cards:**
+  - **Active Talent Pool:** Total active applicants in the requisition across the 4 active pipeline stages. *(1-click filter)*
+  - **Pipeline Velocity & SLA Alerts:** Average stage dwell time (`d`) with an automated **pulsating amber indicator** for candidates stuck &ge; 7 days. *(1-click filter: `"stuck for more than a week"`)*
+  - **Offer Conversion:** Live count of hires and candidate-to-offer **Win Rate %**. *(1-click filter: `"stage:hired"`)*
+  - **Compliance Audit Trail:** Total cryptographically signed, immutable events sealed in the SHA-256 ledger.
+- **Stage Flow Distribution Ribbon:** Real-time proportional distribution bar across Applied (sky), Screening (amber), Interview (purple), Offer (pink), and Hired (emerald). Hover to see percentages and click any segment to filter.
+- **Dual View Mode Switcher:** Seamlessly switch between:
+  - **Kanban Board:** Card-based workflow with stage progression, quick rejection, and dwell-time meters.
+  - **Executive Table List:** High-density data grid with avatar icons, stage pills, live dwell timers, sealed audit record counts, match relevance badges, and inline actions.
+- **Local Persistence & Demo Reset:** Automatically persists state to browser `localStorage` and includes a 1-click **"Reset Demo"** button in the header.
+
+---
+
+### 2. Strict Pipeline Management (Domain FSM)
+- **Add Candidates:** Click **"+ Add Candidate"** to introduce new candidates directly into `Applied`, immediately sealing an initial creation audit entry.
+- **Stage Progression:** Move candidates forward strictly **one stage at a time** (`Applied` → `Screening` → `Interview` → `Offer` → `Hired`). Skipping stages or jumping forward is mathematically prohibited at the domain layer.
+- **Terminal State Locks:** Once a candidate is `Hired` or `Rejected`, their outcome is permanently locked. Reversals or subsequent transitions are blocked.
 - **Pre-Hired Rejection:** Candidates can be rejected from any stage prior to being hired, capturing a mandatory audit rationale.
 - **Live Stage Dwell-Time:** Every candidate card and profile calculates live duration in the current stage (e.g. `9 days, 4 hours`). Candidates waiting for &ge; 7 days are automatically flagged with visual **⚠️ Stalled** SLA warning badges.
 - **Immutable Audit Trail:** Click any candidate to inspect their complete, tamper-evident audit history sealed with cryptographic fingerprints (`sha256:aud_...`).
 
 ---
 
-### 2. Single Intelligent Search Box
+### 3. Single Intelligent Search Box (Zero Cloud LLMs — 100% Native)
 
 The recruiter can ask complex natural language questions in a single search bar. Every question from the prompt is supported and verified:
 
@@ -84,9 +100,10 @@ When a query returns 0 matches or includes unrecognized terms, the search engine
 
 ---
 
-### 3. Extra Enterprise Features (100% Native — Zero External APIs/Tools)
+### 4. Extra Enterprise Features (100% Native — Zero External APIs/Tools)
 - **🎙️ Native Web Speech Voice Search:** Click the microphone icon in the search box to dictate search questions hands-free (e.g. *"Who moved to Interview since Monday?"*). Built using the native HTML5 Web Speech API (`webkitSpeechRecognition`), requiring 0 third-party packages and 0 cloud API keys.
 - **✉️ Context-Aware Polite Rejection Email Previews:** When rejecting a candidate, recruiters can toggle a live decline email preview tailored specifically to whether the candidate was in `Applied`, `Screening`, `Interview`, or `Offer` stage. Incorporates the audit rationale and includes a 1-click **"Copy Draft"** clipboard action to protect candidate experience (CX).
+- **📋 Architecture & Engineering Decisions Modal:** Click **"Architecture & Report"** in the top navbar to inspect interactive architectural diagrams, trade-off analysis, and print or download the documentation.
 
 ---
 
