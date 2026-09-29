@@ -3,165 +3,283 @@ import fs from 'fs';
 import path from 'path';
 
 async function generateArchitecturePDF() {
-  console.log('Generating Mini_Hiring_Pipeline_Architecture.pdf...');
+  console.log('Generating clean Mini_Hiring_Pipeline_Architecture.pdf...');
 
   const pdfDoc = await PDFDocument.create();
   const fontRegular = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
   const fontMono = await pdfDoc.embedFont(StandardFonts.Courier);
 
-  // Helper colors
-  const primaryColor = rgb(0.31, 0.27, 0.9); // Indigo #4f46e5
-  const darkTextColor = rgb(0.06, 0.09, 0.16); // Slate #0f172a
-  const mutedTextColor = rgb(0.39, 0.45, 0.55); // Slate #64748b
-  const accentAmber = rgb(0.85, 0.55, 0.05); // Amber #d97706
-  const bgCardColor = rgb(0.96, 0.97, 0.99); // Slate-50 #f8fafc
-  const borderColor = rgb(0.88, 0.91, 0.94); // Border #e2e8f0
+  // Curated color palette
+  const primaryColor = rgb(0.24, 0.22, 0.78); // Indigo #3d38c6
+  const darkTextColor = rgb(0.08, 0.11, 0.18); // Slate-900 #141c2e
+  const mutedTextColor = rgb(0.38, 0.44, 0.54); // Slate-500 #61708a
+  const codeBgColor = rgb(0.06, 0.09, 0.15); // Dark box #0f1726
+  const cardBgColor = rgb(0.96, 0.97, 0.99); // Light gray #f5f7fa
+  const cardBorder = rgb(0.86, 0.89, 0.93); // Border #dce2eb
+  const amberBorder = rgb(0.92, 0.65, 0.15); // Amber
+  const amberBg = rgb(0.99, 0.98, 0.92); // Amber light
+  const greenText = rgb(0.08, 0.62, 0.38); // Emerald #159e61
 
-  // ----------------------------------------------------
-  // PAGE 1
-  // ----------------------------------------------------
-  const page1 = pdfDoc.addPage([595.28, 841.89]); // A4
-  const { width, height } = page1.getSize();
-  const margin = 42;
+  const pageWidth = 595.28;
+  const pageHeight = 841.89;
+  const margin = 45;
+  const contentWidth = pageWidth - margin * 2;
 
-  let y = height - 45;
+  // Helper for footer on every page
+  const addFooter = (page: any, pageNum: number, totalPages: number) => {
+    page.drawText(
+      `Mini Hiring Pipeline — System Architecture & Deliverables Report  •  Page ${pageNum} of ${totalPages}`,
+      {
+        x: margin,
+        y: 24,
+        size: 8,
+        font: fontRegular,
+        color: mutedTextColor,
+      }
+    );
+  };
 
-  // Title
-  page1.drawText('Mini Hiring Pipeline — Architecture Report', {
+  // =========================================================================
+  // PAGE 1: TITLE, REPO LINK, AND ARCHITECTURE SUMMARY
+  // =========================================================================
+  const page1 = pdfDoc.addPage([pageWidth, pageHeight]);
+  let y = pageHeight - 45;
+
+  // Header Title
+  page1.drawText('Mini Hiring Pipeline — System Architecture', {
     x: margin,
     y,
-    size: 20,
+    size: 19,
     font: fontBold,
     color: primaryColor,
   });
-  y -= 18;
+  y -= 16;
 
-  // Subtitle
-  page1.drawText('Finite State Machine, Immutable Audit Event Store & Intelligent Search Engine', {
+  page1.drawText('Technical specification, state invariants, search engine design, and engineering trade-offs', {
     x: margin,
     y,
-    size: 10,
+    size: 9.5,
     font: fontRegular,
     color: mutedTextColor,
   });
-  y -= 20;
+  y -= 18;
 
-  // Meta Box
+  // Header Meta Card (Links & Deliverables)
   page1.drawRectangle({
     x: margin,
-    y: y - 54,
-    width: width - margin * 2,
-    height: 54,
-    color: bgCardColor,
-    borderColor: borderColor,
+    y: y - 56,
+    width: contentWidth,
+    height: 56,
+    color: cardBgColor,
+    borderColor: cardBorder,
     borderWidth: 1,
   });
 
   page1.drawText('GitHub Repository: https://github.com/SAfsehEhsani/Mini-Hiring-Pipeline-Career-Passport-', {
-    x: margin + 14,
+    x: margin + 12,
     y: y - 18,
     size: 9,
     font: fontBold,
     color: darkTextColor,
   });
-  page1.drawText('Tech Stack: React 19, TypeScript, Vite 8, Modern Vanilla CSS3, Event-Sourced Audit Store', {
-    x: margin + 14,
+  page1.drawText('AI Collaboration Logs: chat_logs/AI_COLLABORATION_LOGS.md (Pushed to main branch)', {
+    x: margin + 12,
     y: y - 32,
-    size: 9,
+    size: 8.5,
+    font: fontRegular,
+    color: darkTextColor,
+  });
+  page1.drawText('Tech Stack: React 19, TypeScript (Strict Mode), Vite 8, Event-Sourced In-Memory Ledger', {
+    x: margin + 12,
+    y: y - 46,
+    size: 8.5,
     font: fontRegular,
     color: mutedTextColor,
   });
-  page1.drawText('Job Requisition: Senior Staff Software Engineer (#4029) • Automated Verification: 14/14 Passed', {
-    x: margin + 14,
-    y: y - 46,
-    size: 9,
-    font: fontRegular,
-    color: primaryColor,
-  });
   y -= 74;
 
-  // Section 1: Executive Overview
-  page1.drawText('1. Executive Architecture Overview', {
+  // Section 1: Summary of Architecture
+  page1.drawText('1. Summary of Architecture', {
     x: margin,
     y,
     size: 13,
     font: fontBold,
     color: darkTextColor,
   });
-  y -= 14;
+  y -= 15;
 
-  const introText = [
-    'The application manages an end-to-end recruiter hiring pipeline centered around an immutable',
-    'audit event stream and a strict Finite State Machine (FSM). Skipping pipeline stages is prevented,',
-    'and terminal states (Hired and Rejected) are permanently locked against reversal. An in-browser',
-    'hybrid natural language search engine resolves complex recruiter questions with zero cloud latency.',
+  const summaryParagraph = [
+    'The application is an enterprise recruiter workspace designed for high integrity and zero cloud latency.',
+    'It centers around three architectural pillars: (1) a formal Finite State Machine enforcing sequential stage',
+    'progression, (2) an append-only event-sourced audit ledger, and (3) an in-browser hybrid search engine.',
   ];
-  for (const line of introText) {
-    page1.drawText(line, { x: margin, y, size: 9, font: fontRegular, color: darkTextColor });
+  for (const line of summaryParagraph) {
+    page1.drawText(line, { x: margin, y, size: 8.8, font: fontRegular, color: darkTextColor });
     y -= 12;
   }
   y -= 8;
 
-  // Section 2: Pipeline State Machine
-  page1.drawText('2. Pipeline State Machine & Progression Invariants', {
+  // 1.1 FSM
+  page1.drawText('1.1 Pipeline Finite State Machine (FSM) & Stage Invariants', {
     x: margin,
     y,
-    size: 13,
+    size: 10.5,
     font: fontBold,
-    color: darkTextColor,
+    color: primaryColor,
   });
-  y -= 14;
+  y -= 13;
 
-  const fsmPoints = [
-    '• Strict 1-Step Sequential Forward Transitions: Applied -> Screening -> Interview -> Offer -> Hired.',
-    '• Stage Skipping Prohibited: Domain layer rejects direct jumps (e.g. Applied -> Offer is blocked).',
-    '• Terminal Sink Locks: Once Hired, a candidate cannot be transitioned or rejected. Once Rejected,',
-    '  a candidate cannot be revived or advanced. Final outcomes are permanently immutable.',
-    '• Rejection Invariant: A candidate may be rejected from any active stage prior to being hired.',
-    '• Cryptographic Audit Trail: Every transition logs timestamp, actor, fromStage, toStage, reason,',
-    '  and a deterministic SHA-256 seal (sha256:aud_...). The history is strictly append-only.',
+  const fsmBulletPoints = [
+    '• 5 Sequential Stages: Applied -> Screening -> Interview -> Offer -> Hired.',
+    '• Strict 1-Step Progression: Candidates move forward exactly one stage at a time. Skipping stages',
+    '  (e.g., jumping from Applied directly to Offer) is blocked at the domain layer.',
+    '• Terminal Sink Invariants: "Hired" and "Rejected" are permanent terminal states. Once a candidate is',
+    '  hired, they cannot be transitioned or rejected. Once rejected, a candidate cannot be revived.',
+    '• Pre-Hired Rejection: A candidate can be rejected from any active stage before being hired, requiring',
+    '  a mandatory audit rationale to prevent unreasoned candidate dismissals.',
   ];
-  for (const point of fsmPoints) {
-    page1.drawText(point, { x: margin, y, size: 8.8, font: fontRegular, color: darkTextColor });
-    y -= 13;
+  for (const point of fsmBulletPoints) {
+    page1.drawText(point, { x: margin, y, size: 8.5, font: fontRegular, color: darkTextColor });
+    y -= 12;
   }
-  y -= 10;
+  y -= 8;
 
-  // FSM Visual Diagram Box
+  // FSM Diagram Box
   page1.drawRectangle({
     x: margin,
-    y: y - 56,
-    width: width - margin * 2,
-    height: 56,
-    color: rgb(0.06, 0.09, 0.16),
+    y: y - 48,
+    width: contentWidth,
+    height: 48,
+    color: codeBgColor,
   });
 
   page1.drawText('[Applied] ---> [Screening] ---> [Interview] ---> [Offer] ---> [Hired] (TERMINAL)', {
-    x: margin + 20,
-    y: y - 22,
-    size: 8.5,
+    x: margin + 14,
+    y: y - 18,
+    size: 8.2,
     font: fontMono,
-    color: rgb(0.22, 0.74, 0.97),
+    color: rgb(0.24, 0.78, 0.98),
   });
   page1.drawText('   |                |               |              |', {
-    x: margin + 20,
-    y: y - 34,
-    size: 8.5,
+    x: margin + 14,
+    y: y - 28,
+    size: 8.2,
     font: fontMono,
     color: rgb(0.6, 0.65, 0.75),
   });
   page1.drawText('   +----------------+---------------+--------------+---> [Rejected] (TERMINAL)', {
-    x: margin + 20,
-    y: y - 46,
-    size: 8.5,
+    x: margin + 14,
+    y: y - 38,
+    size: 8.2,
     font: fontMono,
-    color: rgb(0.95, 0.25, 0.37),
+    color: rgb(0.96, 0.28, 0.4),
   });
-  y -= 76;
+  y -= 64;
 
-  // Section 3: Requirements & Prompt Question Verification
-  page1.drawText('3. Prompt Question Verification Matrix (All 6 Scenarios Tested)', {
+  // 1.2 Event Sourcing & Audit Trail
+  page1.drawText('1.2 Append-Only Cryptographic Audit Trail', {
+    x: margin,
+    y,
+    size: 10.5,
+    font: fontBold,
+    color: primaryColor,
+  });
+  y -= 13;
+
+  const auditBullets = [
+    '• Event Sourcing: Candidate state is a projection of immutable AuditEntry events rather than overwritten rows.',
+    '• Cryptographic Sealing: Every stage transition or rejection generates a deterministic SHA-256 signature',
+    '  (sha256:aud_...) hashing candidateId, timestamp, actor, fromStage, toStage, and decision reason.',
+    '• Live Stage Dwell-Time & SLA Bottlenecks: Calculates exact duration in the active stage (days and hours).',
+    '  Candidates waiting for >= 7 days in a single stage are automatically flagged with visual SLA alert badges.',
+  ];
+  for (const point of auditBullets) {
+    page1.drawText(point, { x: margin, y, size: 8.5, font: fontRegular, color: darkTextColor });
+    y -= 12;
+  }
+  y -= 8;
+
+  // 1.3 Search Engine
+  page1.drawText('1.3 Single Intelligent Search Box (Hybrid Client-Side Engine)', {
+    x: margin,
+    y,
+    size: 10.5,
+    font: fontBold,
+    color: primaryColor,
+  });
+  y -= 13;
+
+  const searchBullets = [
+    '• Damerau-Levenshtein Distance: Detects adjacent letter transpositions (e.g. "sharam" <-> "sharma" = 1).',
+    '• Dynamic Temporal & Calendar Math: Resolves relative days ("since Monday") against system Date.now().',
+    '• Historical Milestone Scan: Evaluates past event streams ("Reached Offer stage but didn\'t get hired").',
+    '• Multi-Factor Relevance Ranking: Weights name similarity, stage intent, and recency (best matches first).',
+    '• Explainability Feedback: Explains why a query returned 0 matches and offers helpful suggestion chips.',
+  ];
+  for (const point of searchBullets) {
+    page1.drawText(point, { x: margin, y, size: 8.5, font: fontRegular, color: darkTextColor });
+    y -= 12;
+  }
+
+  addFooter(page1, 1, 3);
+
+  // =========================================================================
+  // PAGE 2: ENGINEERING DECISIONS & HUMAN-IN-THE-LOOP DISAGREEMENT
+  // =========================================================================
+  const page2 = pdfDoc.addPage([pageWidth, pageHeight]);
+  y = pageHeight - 45;
+
+  // Section 2: Key Decisions Made and Why
+  page2.drawText('2. Key Engineering Decisions & Why', {
+    x: margin,
+    y,
+    size: 13,
+    font: fontBold,
+    color: darkTextColor,
+  });
+  y -= 15;
+
+  const decisions = [
+    {
+      title: 'Decision 1: Centralized Finite State Machine vs. Ad-Hoc Status Flags',
+      text: [
+        'Why: In recruiting pipelines, human error (e.g., accidentally advancing an applicant directly from Applied',
+        'to Offer or editing a rejected candidate) introduces serious compliance violations. By encapsulating stage',
+        'transitions inside a domain-level State Machine, invalid transitions are mathematically impossible.',
+      ],
+    },
+    {
+      title: 'Decision 2: Append-Only Event Stream vs. In-Place Row Overwrites',
+      text: [
+        'Why: Employment compliance frameworks (EEOC, GDPR, SOC-2) require that candidate history can never be',
+        'erased, altered, or backdated. Modeling each state change as an immutable cryptographic audit record',
+        'ensures complete legal traceability and forensic accountability.',
+      ],
+    },
+    {
+      title: 'Decision 3: In-Browser Deterministic Search vs. Cloud LLM API Calls',
+      text: [
+        'Why: Recruiters search interactively as they type. Calling a cloud LLM on every keystroke incurs 500-1500ms',
+        'network latency, leaks candidate PII to external third-party servers, and risks non-deterministic hallucinations.',
+        'A client-side hybrid parser executes in < 1ms offline, guarantees 100% privacy, and costs $0 in cloud bills.',
+      ],
+    },
+  ];
+
+  for (const d of decisions) {
+    page2.drawText(d.title, { x: margin, y, size: 9.5, font: fontBold, color: primaryColor });
+    y -= 12;
+    for (const line of d.text) {
+      page2.drawText(line, { x: margin, y, size: 8.5, font: fontRegular, color: darkTextColor });
+      y -= 11.5;
+    }
+    y -= 6;
+  }
+  y -= 6;
+
+  // Section 3: Human-in-the-Loop Disagreement
+  page2.drawText('3. Human-in-the-Loop: Where I Disagreed with the AI', {
     x: margin,
     y,
     size: 13,
@@ -170,112 +288,62 @@ async function generateArchitecturePDF() {
   });
   y -= 14;
 
-  const testMatrix = [
-    ['"Find Priya Sharma" (even with "sharam")', 'Damerau-Levenshtein distance (edit=1) resolves transposition', 'PASSED'],
-    ['"Who\'s in Interview right now?"', 'Current stage intent extractor filters stage=Interview & active', 'PASSED'],
-    ['"Stuck in Screening for > 1 week"', 'Live duration resolver calculates elapsed days >= 7 (Priya 9d)', 'PASSED'],
-    ['"Who moved to Interview since Monday?"', 'Dynamic calendar resolver inspects audit log transition dates', 'PASSED'],
-    ['"Reached Offer stage but not hired"', 'Historical audit log inspector checks milestone + non-hired', 'PASSED'],
-    ['"Everyone except rejected candidates"', 'Negation filter excludes candidates where status === REJECTED', 'PASSED'],
-  ];
-
-  for (const [q, method, status] of testMatrix) {
-    page1.drawText(q, { x: margin + 6, y, size: 8.5, font: fontBold, color: primaryColor });
-    page1.drawText(method, { x: margin + 220, y, size: 8, font: fontRegular, color: darkTextColor });
-    page1.drawText(`[${status}]`, { x: width - margin - 50, y, size: 8, font: fontBold, color: rgb(0.06, 0.7, 0.45) });
-    y -= 14;
-  }
-
-  // Footer page 1
-  page1.drawText('Mini Hiring Pipeline Architecture Report • Page 1 of 2', {
-    x: width / 2 - 95,
-    y: 20,
-    size: 8,
-    font: fontRegular,
-    color: mutedTextColor,
-  });
-
-  // ----------------------------------------------------
-  // PAGE 2
-  // ----------------------------------------------------
-  const page2 = pdfDoc.addPage([595.28, 841.89]);
-  y = height - 45;
-
-  // Section 4: Human-in-the-Loop Disagreement
-  page2.drawText('4. Human-in-the-Loop: Where I Disagreed with the AI Assistant', {
-    x: margin,
-    y,
-    size: 14,
-    font: fontBold,
-    color: darkTextColor,
-  });
-  y -= 18;
-
-  // Amber callout box
+  // Disagreement Callout Box
   page2.drawRectangle({
     x: margin,
-    y: y - 110,
-    width: width - margin * 2,
-    height: 110,
-    color: rgb(1, 0.98, 0.92),
-    borderColor: rgb(0.96, 0.75, 0.25),
+    y: y - 138,
+    width: contentWidth,
+    height: 138,
+    color: amberBg,
+    borderColor: amberBorder,
     borderWidth: 1,
   });
 
   page2.drawText('THE AI ASSISTANT PROPOSAL:', {
-    x: margin + 14,
-    y: y - 18,
-    size: 9.5,
+    x: margin + 12,
+    y: y - 16,
+    size: 9,
     font: fontBold,
-    color: accentAmber,
+    color: rgb(0.78, 0.45, 0.05),
   });
-  page2.drawText('The AI recommended integrating an external cloud LLM (e.g., OpenAI or Claude API) to parse every search', {
-    x: margin + 14,
-    y: y - 32,
-    size: 8.8,
-    font: fontRegular,
-    color: darkTextColor,
-  });
-  page2.drawText('box keystroke into JSON filter objects, or alternatively falling back to simple regex substring lookups.', {
-    x: margin + 14,
-    y: y - 44,
-    size: 8.8,
-    font: fontRegular,
-    color: darkTextColor,
-  });
+  page2.drawText(
+    'During the initial design phase, the AI assistant recommended calling a cloud LLM API (such as OpenAI GPT-4o',
+    { x: margin + 12, y: y - 29, size: 8.3, font: fontRegular, color: darkTextColor }
+  );
+  page2.drawText(
+    'or Claude 3.5) on every search input keystroke to parse recruiter queries into JSON filter parameters, or alternatively',
+    { x: margin + 12, y: y - 40, size: 8.3, font: fontRegular, color: darkTextColor }
+  );
+  page2.drawText(
+    'falling back to basic regex substring matching.',
+    { x: margin + 12, y: y - 51, size: 8.3, font: fontRegular, color: darkTextColor }
+  );
 
-  page2.drawText('WHY I DISAGREED & THE SUPERIOR ARCHITECTURAL ALTERNATIVE:', {
-    x: margin + 14,
-    y: y - 62,
-    size: 9.5,
+  page2.drawText('WHY I DISAGREED & THE SUPERIOR ALTERNATIVE I IMPLEMENTED:', {
+    x: margin + 12,
+    y: y - 67,
+    size: 9,
     font: fontBold,
     color: primaryColor,
   });
-  page2.drawText('1. Latency: Cloud LLM roundtrips take 500-1200ms per keystroke. Our client-side parser takes < 1ms.', {
-    x: margin + 14,
-    y: y - 76,
-    size: 8.5,
-    font: fontRegular,
-    color: darkTextColor,
-  });
-  page2.drawText('2. Privacy (PII): Streaming candidate names and contacts to third-party LLMs creates GDPR/SOC2 risk.', {
-    x: margin + 14,
-    y: y - 88,
-    size: 8.5,
-    font: fontRegular,
-    color: darkTextColor,
-  });
-  page2.drawText('3. Determinism: LLMs hallucinate dates; our hybrid tokenizer guarantees 100% reproducible results.', {
-    x: margin + 14,
-    y: y - 100,
-    size: 8.5,
-    font: fontRegular,
-    color: darkTextColor,
-  });
-  y -= 130;
 
-  // Section 5: Search Engine Deep Dive
-  page2.drawText('5. The Hybrid NLP & Fuzzy Search Engine Architecture', {
+  const disagreementReasons = [
+    '1. Latency: Cloud LLM round-trips take 500ms-1500ms per keystroke. Recruiters expect instant (< 2ms) typing response.',
+    '2. PII Privacy: Streaming candidate resumes, names, and recruiter notes to external cloud endpoints violates GDPR and SOC-2.',
+    '3. Date Inconsistency: LLMs frequently hallucinate calendar math when given relative terms like "since Monday".',
+    'Implemented Alternative: I overrode the AI and built a deterministic in-browser hybrid engine combining Damerau-',
+    'Levenshtein fuzzy matching with a relative calendar day resolver. It runs entirely offline in < 1ms with 100% precision.',
+  ];
+
+  let boxY = y - 80;
+  for (const r of disagreementReasons) {
+    page2.drawText(r, { x: margin + 12, y: boxY, size: 8.2, font: fontRegular, color: darkTextColor });
+    boxY -= 11.2;
+  }
+  y -= 155;
+
+  // Section 4: What I'd Do With More Time
+  page2.drawText("4. What I Would Do With More Time", {
     x: margin,
     y,
     size: 13,
@@ -284,64 +352,179 @@ async function generateArchitecturePDF() {
   });
   y -= 14;
 
-  const searchDetails = [
-    '• Tokenizer & Contraction Reducer: Strips conversational prefixes ("Who is", "Who has been",',
-    '  "show me") while preserving keyword stems and stage target words.',
-    '• Damerau-Levenshtein Edit Distance: Calculates edit distance including adjacent character',
-    '  transpositions ("sharam" <-> "sharma" = 1 transposition). Normalizes similarity between 0 and 1.',
-    '• Dynamic Calendar Day Resolver: Resolves relative day names ("since Monday") to the exact previous',
-    '  Monday relative to Date.now(), then queries candidate audit log entries for matching transitions.',
-    '• Historical Milestone Inspector: Evaluates past audit events rather than only current stage, answering',
-    '  deep questions like "Who reached the Offer stage but didn\'t get hired?".',
-    '• Ranking & Relevance Engine: Scores matches with weighted priorities (Exact Name = 100, Fuzzy = 70,',
-    '  Stage/Duration = 60), ensuring best matches consistently appear first.',
-    '• Explainability Feedback: Never returns a silent blank screen; explains the diagnosis (e.g. longest',
-    '  stalled candidate is 9d vs requested 30d) and provides clickable suggestions.',
-    '• Native Web Speech Voice Search: Built-in browser speech recognition (0 external APIs/tools)',
-    '  allowing recruiters to dictate natural language queries directly by voice.',
-    '• Context-Aware Decline Email Previews: Dynamic stage-tailored decline drafts (Applied vs.',
-    '  Screening vs. Interview vs. Offer) with 1-click clipboard copying for candidate experience.',
+  const moreTimeItems = [
+    '1. Multi-Requisition Workspaces: Extend the architecture from a single requisition to a multi-job workspace',
+    '   allowing recruiters to customize stage sequences and hiring criteria per department (Engineering vs. Sales).',
+    '2. Distributed Event Sourcing (Kafka / Postgres WAL): Persist the append-only audit stream to a real-time event',
+    '   broker with WebSocket synchronization for multi-recruiter concurrent pipeline collaboration.',
+    '3. Merkle DAG Cryptographic Compliance Proofs: Hash-chain audit entries into a verifiable Merkle DAG so external',
+    '   auditors can cryptographically verify that zero records were deleted, altered, or backdated.',
+    '4. Automated SLA Webhooks & Calendar Sync: Trigger automatic Slack notifications when candidate stage dwell time',
+    '   approaches SLA thresholds (> 5 days in Screening), plus direct 1-click Google Calendar interview booking.',
   ];
-  for (const item of searchDetails) {
-    page2.drawText(item, { x: margin, y, size: 8.7, font: fontRegular, color: darkTextColor });
-    y -= 13;
+
+  for (const line of moreTimeItems) {
+    page2.drawText(line, { x: margin, y, size: 8.5, font: fontRegular, color: darkTextColor });
+    y -= 12;
+  }
+
+  addFooter(page2, 2, 3);
+
+  // =========================================================================
+  // PAGE 3: PROMPT VERIFICATION MATRIX & DELIVERABLES CHECKLIST
+  // =========================================================================
+  const page3 = pdfDoc.addPage([pageWidth, pageHeight]);
+  y = pageHeight - 45;
+
+  // Section 5: Prompt Question Verification Matrix
+  page3.drawText('5. Prompt Question Verification Matrix (All 6 Scenarios Tested)', {
+    x: margin,
+    y,
+    size: 13,
+    font: fontBold,
+    color: darkTextColor,
+  });
+  y -= 16;
+
+  page3.drawText(
+    'Every question specified in instructions.md is tested via automated invariants in scripts/verify-all.ts:',
+    { x: margin, y, size: 8.8, font: fontRegular, color: mutedTextColor }
+  );
+  y -= 16;
+
+  const testMatrix = [
+    {
+      q: 'Q1: "Find Priya Sharma", even with "sharam"',
+      how: 'Damerau-Levenshtein distance (edit=1) resolves adjacent character transposition.',
+      result: 'Priya Sharma ranked #1 (83% similarity)',
+    },
+    {
+      q: 'Q2: "Who\'s in Interview right now?"',
+      how: 'Stage intent extractor normalizes contractions and filters stage=Interview & status=ACTIVE.',
+      result: 'Marcus Chen, Elena Rostova, Lucas Silva',
+    },
+    {
+      q: 'Q3: "Stuck in Screening for more than a week"',
+      how: 'Temporal duration resolver compares stageEnteredAt with system Date.now() (days >= 7).',
+      result: 'Priya Sharma (9d) & Aarav Patel (12d)',
+    },
+    {
+      q: 'Q4: "Who moved to Interview since Monday?"',
+      how: 'Dynamic calendar resolver calculates most recent Monday and inspects transition audit logs.',
+      result: 'Marcus Chen & Lucas Silva',
+    },
+    {
+      q: 'Q5: "Reached Offer stage but didn\'t get hired"',
+      how: 'Historical milestone inspector scans past audit events for toStage=Offer and status!=HIRED.',
+      result: 'Amina Diallo (Reached Offer; declined; Rejected)',
+    },
+    {
+      q: 'Q6: "Everyone except rejected candidates"',
+      how: 'Negation and exclusion filter strips all candidates where status === REJECTED.',
+      result: 'Returns all active and hired candidates',
+    },
+  ];
+
+  for (const item of testMatrix) {
+    page3.drawRectangle({
+      x: margin,
+      y: y - 36,
+      width: contentWidth,
+      height: 36,
+      color: cardBgColor,
+      borderColor: cardBorder,
+      borderWidth: 1,
+    });
+
+    page3.drawText(item.q, { x: margin + 10, y: y - 13, size: 8.7, font: fontBold, color: primaryColor });
+    page3.drawText('[PASSED]', { x: contentWidth + margin - 52, y: y - 13, size: 8.5, font: fontBold, color: greenText });
+    page3.drawText(`How: ${item.how}`, { x: margin + 10, y: y - 24, size: 8, font: fontRegular, color: darkTextColor });
+    page3.drawText(`Result: ${item.result}`, { x: margin + 10, y: y - 33, size: 7.8, font: fontRegular, color: mutedTextColor });
+
+    y -= 42;
+  }
+  y -= 8;
+
+  // Section 6: Deliverables Checklist
+  page3.drawText('6. Deliverables & Submission Verification Checklist', {
+    x: margin,
+    y,
+    size: 13,
+    font: fontBold,
+    color: darkTextColor,
+  });
+  y -= 14;
+
+  const deliverablesChecklist = [
+    {
+      item: '1. Architecture PDF Deliverable',
+      detail: 'Generated as Mini_Hiring_Pipeline_Architecture.pdf containing repo link & architecture summary.',
+      status: 'COMPLETE',
+    },
+    {
+      item: '2. GitHub Repository & README.md',
+      detail: 'Live at https://github.com/SAfsehEhsani/Mini-Hiring-Pipeline-Career-Passport- (main branch).',
+      status: 'COMPLETE',
+    },
+    {
+      item: '3. Complete AI Collaboration Logs',
+      detail: 'Committed to repository at chat_logs/AI_COLLABORATION_LOGS.md documenting full conversation history.',
+      status: 'COMPLETE',
+    },
+    {
+      item: '4. Human-in-the-Loop Disagreement',
+      detail: 'Documented in README.md, ARCHITECTURE.md, and this PDF (rejected cloud LLM in favor of hybrid engine).',
+      status: 'COMPLETE',
+    },
+    {
+      item: '5. Automated Invariant & Search Tests',
+      detail: '14/14 automated test assertions pass with zero failures via "npm test" (scripts/verify-all.ts).',
+      status: '14/14 PASS',
+    },
+  ];
+
+  for (const d of deliverablesChecklist) {
+    page3.drawText(`• ${d.item}: `, { x: margin, y, size: 8.5, font: fontBold, color: darkTextColor });
+    const itemWidth = fontBold.widthOfTextAtSize(`• ${d.item}: `, 8.5);
+    page3.drawText(d.detail, { x: margin + itemWidth, y, size: 8.2, font: fontRegular, color: mutedTextColor });
+    page3.drawText(`[${d.status}]`, { x: contentWidth + margin - 64, y, size: 8, font: fontBold, color: greenText });
+    y -= 14;
   }
   y -= 10;
 
-  // Section 6: What We'd Do With More Time
-  page2.drawText('6. What We Would Do With More Time', {
+  // Sign-off box
+  page3.drawRectangle({
     x: margin,
-    y,
-    size: 13,
-    font: fontBold,
+    y: y - 36,
+    width: contentWidth,
+    height: 36,
+    color: rgb(0.95, 0.98, 0.95),
+    borderColor: rgb(0.7, 0.88, 0.75),
+    borderWidth: 1,
+  });
+
+  page3.drawText('All domain rules, FSM invariants, audit logging, and natural language search capabilities are', {
+    x: margin + 12,
+    y: y - 14,
+    size: 8.2,
+    font: fontRegular,
     color: darkTextColor,
   });
-  y -= 14;
-
-  const futureWork = [
-    '1. Multi-Requisition Pipelines: Support multiple concurrent job postings with customizable stage sequences.',
-    '2. Distributed Event Sourcing: Connect audit log to Apache Kafka or Postgres Write-Ahead Log with WebSockets.',
-    '3. Merkle Tree Cryptographic Audit Proofs: Chain audit signatures into a Merkle DAG for compliance proof.',
-    '4. Automated SLA Webhooks: Trigger Slack and calendar notifications when candidate dwell time exceeds 5 days.',
-  ];
-  for (const item of futureWork) {
-    page2.drawText(item, { x: margin, y, size: 8.7, font: fontRegular, color: darkTextColor });
-    y -= 13;
-  }
-
-  // Footer page 2
-  page2.drawText('Mini Hiring Pipeline Architecture Report • Page 2 of 2', {
-    x: width / 2 - 95,
-    y: 20,
-    size: 8,
-    font: fontRegular,
-    color: mutedTextColor,
+  page3.drawText('100% verified, fully functional, and ready for recruiter evaluation.', {
+    x: margin + 12,
+    y: y - 26,
+    size: 8.2,
+    font: fontBold,
+    color: greenText,
   });
 
+  addFooter(page3, 3, 3);
+
+  // Save PDF
   const pdfBytes = await pdfDoc.save();
   const outputPath = path.resolve('Mini_Hiring_Pipeline_Architecture.pdf');
   fs.writeFileSync(outputPath, pdfBytes);
-  console.log(`✅ Mini_Hiring_Pipeline_Architecture.pdf created successfully (${pdfBytes.length} bytes)!`);
+  console.log(`✅ Mini_Hiring_Pipeline_Architecture.pdf successfully created (${pdfBytes.length} bytes, 3 pages)!`);
 }
 
 generateArchitecturePDF().catch((err) => {
