@@ -82,7 +82,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
         {PIPELINE_STAGES.map((stage) => {
           const items = getCandidatesForStage(stage);
           return (
-            <div key={stage} className="kanban-column">
+            <div key={stage} className={`kanban-column stage-col-${stage.toLowerCase()}`}>
               <div className="kanban-column-header">
                 <div className="col-title-group">
                   <span
@@ -99,7 +99,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
                   <div
                     style={{
                       textAlign: 'center',
-                      padding: '2rem 1rem',
+                      padding: '2.5rem 1rem',
                       color: 'var(--text-dim)',
                       fontSize: '0.82rem',
                     }}
@@ -125,7 +125,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
 
         {/* Optional Rejected Column */}
         {showRejectedColumn && (
-          <div className="kanban-column" style={{ borderColor: 'rgba(244, 63, 94, 0.25)' }}>
+          <div className="kanban-column stage-col-rejected">
             <div
               className="kanban-column-header"
               style={{ background: 'rgba(244, 63, 94, 0.08)' }}
