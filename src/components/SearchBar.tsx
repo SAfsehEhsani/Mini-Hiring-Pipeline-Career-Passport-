@@ -1,5 +1,5 @@
-import React from 'react';
-import { Search, X, Sparkles, AlertCircle, HelpCircle } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Search, X, Sparkles, AlertCircle, HelpCircle, Mic, MicOff } from 'lucide-react';
 import type { ParsedSearchQuery } from '../types/pipeline';
 
 interface SearchBarProps {
@@ -25,6 +25,62 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   totalMatches,
 }) => {
   const isZeroMatch = query.trim().length > 0 && totalMatches === 0;
+  const [isListening, setIsListening] = useState(false);
+  const [speechSupported, setSpeechSupported] = useState(false);
+  const recognitionRef = useRef<any>(null);
+
+  // Initialize native browser Web Speech API (Zero external APIs / tools)
+  useEffect(() => {
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+    if (SpeechRecognition) {
+      setSpeechSupported(true);
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
+
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        if (transcript) {
+          onQueryChange(transcript.trim());
+        }
+        setIsListening(false);
+      };
+
+      recognition.onerror = (err: any) => {
+        console.warn('Speech recognition status:', err.error);
+        setIsListening(false);
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+
+      recognitionRef.current = recognition;
+    }
+  }, [onQueryChange]);
+
+  const toggleVoiceSearch = () => {
+    if (!speechSupported || !recognitionRef.current) {
+      alert('Voice search is supported natively in Chrome, Edge, and Safari using the Web Speech API.');
+      return;
+    }
+
+    if (isListening) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    } else {
+      try {
+        recognitionRef.current.start();
+        setIsListening(true);
+      } catch (err) {
+        console.error('Failed to start speech recognition:', err);
+        setIsListening(false);
+      }
+    }
+  };
 
   return (
     <section className="search-section">
@@ -52,8 +108,30 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           </button>
         )}
 
+        {/* Voice Search (Browser Native Web Speech API) */}
+        {speechSupported && (
+          <button
+            type="button"
+            className={`voice-search-btn ${isListening ? 'listening' : ''}`}
+            onClick={toggleVoiceSearch}
+            title={isListening ? 'Listening... click to stop' : 'Voice search: Speak your query'}
+            aria-label="Voice search"
+          >
+            {isListening ? <MicOff size={18} /> : <Mic size={18} />}
+            {isListening && <span className="mic-pulse-ring" />}
+          </button>
+        )}
+
         <span className="kbd-shortcut" title="Search Shortcut">⌘K</span>
       </div>
+
+      {/* Listening status indicator */}
+      {isListening && (
+        <div className="voice-listening-banner">
+          <span className="voice-dot-pulse" />
+          <span>Listening... speak your question (e.g. <em>&quot;Who moved to Interview since Monday?&quot;</em>)</span>
+        </div>
+      )}
 
       {/* Preset Query Chips for Quick Evaluation */}
       <div className="query-presets-container">

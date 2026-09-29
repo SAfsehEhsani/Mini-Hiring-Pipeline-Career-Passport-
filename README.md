@@ -84,6 +84,12 @@ When a query returns 0 matches or includes unrecognized terms, the search engine
 
 ---
 
+### 3. Extra Enterprise Features (100% Native — Zero External APIs/Tools)
+- **🎙️ Native Web Speech Voice Search:** Click the microphone icon in the search box to dictate search questions hands-free (e.g. *"Who moved to Interview since Monday?"*). Built using the native HTML5 Web Speech API (`webkitSpeechRecognition`), requiring 0 third-party packages and 0 cloud API keys.
+- **✉️ Context-Aware Polite Rejection Email Previews:** When rejecting a candidate, recruiters can toggle a live decline email preview tailored specifically to whether the candidate was in `Applied`, `Screening`, `Interview`, or `Offer` stage. Incorporates the audit rationale and includes a 1-click **"Copy Draft"** clipboard action to protect candidate experience (CX).
+
+---
+
 ## 🧠 Architectural Decisions & Why
 
 ### 1. Finite State Machine (FSM) vs. Ad-Hoc Status Flags

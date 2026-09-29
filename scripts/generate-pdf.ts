@@ -297,6 +297,10 @@ async function generateArchitecturePDF() {
     '  Stage/Duration = 60), ensuring best matches consistently appear first.',
     '• Explainability Feedback: Never returns a silent blank screen; explains the diagnosis (e.g. longest',
     '  stalled candidate is 9d vs requested 30d) and provides clickable suggestions.',
+    '• Native Web Speech Voice Search: Built-in browser speech recognition (0 external APIs/tools)',
+    '  allowing recruiters to dictate natural language queries directly by voice.',
+    '• Context-Aware Decline Email Previews: Dynamic stage-tailored decline drafts (Applied vs.',
+    '  Screening vs. Interview vs. Offer) with 1-click clipboard copying for candidate experience.',
   ];
   for (const item of searchDetails) {
     page2.drawText(item, { x: margin, y, size: 8.7, font: fontRegular, color: darkTextColor });

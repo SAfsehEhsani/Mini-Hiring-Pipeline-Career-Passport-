@@ -345,6 +345,103 @@ input, textarea {
   border: 1px solid var(--border-subtle);
 }
 
+/* Voice Search Button (Browser Native Web Speech API) */
+.voice-search-btn {
+  position: relative;
+  color: var(--text-muted);
+  padding: 0.3rem;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.voice-search-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.voice-search-btn.listening {
+  color: #f43f5e;
+  background: rgba(244, 63, 94, 0.15);
+}
+
+.mic-pulse-ring {
+  position: absolute;
+  inset: -3px;
+  border-radius: var(--radius-full);
+  border: 2px solid #f43f5e;
+  animation: micPulse 1.4s infinite cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+@keyframes micPulse {
+  0% { transform: scale(0.9); opacity: 0.9; }
+  70% { transform: scale(1.4); opacity: 0; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+.voice-listening-banner {
+  margin-top: 0.65rem;
+  background: rgba(244, 63, 94, 0.12);
+  border: 1px solid rgba(244, 63, 94, 0.35);
+  border-radius: var(--radius-md);
+  padding: 0.45rem 0.85rem;
+  font-size: 0.82rem;
+  color: #fda4af;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.voice-dot-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #f43f5e;
+  box-shadow: 0 0 8px #f43f5e;
+  animation: blink 1s infinite alternate;
+}
+
+@keyframes blink {
+  from { opacity: 0.4; }
+  to { opacity: 1; }
+}
+
+/* Context-Aware Decline Email Preview */
+.email-preview-card {
+  background: #0b111b;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-top: 0.25rem;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.email-preview-header {
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.6rem 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.email-preview-body {
+  padding: 0.85rem 1rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: #cbd5e1;
+  white-space: pre-line;
+  max-height: 180px;
+  overflow-y: auto;
+  user-select: text;
+}
+
 /* Query Chips (Prompt Scenarios) */
 .query-presets-container {
   margin-top: 0.85rem;

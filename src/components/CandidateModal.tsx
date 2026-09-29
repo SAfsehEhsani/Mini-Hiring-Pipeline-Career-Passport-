@@ -11,6 +11,9 @@ import {
   Phone,
   Calendar,
   Lock,
+  Copy,
+  Check,
+  Eye,
 } from 'lucide-react';
 import type {
   Candidate,
@@ -33,6 +36,77 @@ interface CandidateModalProps {
   onReject: (candidate: Candidate, reason: string) => void;
 }
 
+/**
+ * Generates polite, stage-tailored decline email drafts purely on the client side (0 external APIs)
+ */
+function generateDeclineEmail(candidate: Candidate, reason: string, recruiterName: string = 'The Recruiting Team'): { subject: string; body: string } {
+  const stage = candidate.currentStage;
+  const firstName = candidate.name.split(' ')[0] || candidate.name;
+
+  if (stage === 'Offer') {
+    return {
+      subject: `Update regarding offer discussions — ${candidate.role}`,
+      body: `Dear ${firstName},
+
+Thank you very much for taking the time to speak with our leadership team regarding the offer for the ${candidate.role} position.
+
+While we had hoped to welcome you to our team, we understand and respect the outcome of our discussions${reason ? ` (${reason})` : ''}. We truly enjoyed learning about your background and were thoroughly impressed with your technical capabilities.
+
+We wish you the very best in your next career chapter and would welcome the opportunity to reconnect for future senior leadership roles.
+
+Warm regards,
+${recruiterName}`,
+    };
+  }
+
+  if (stage === 'Interview') {
+    return {
+      subject: `Interview loop feedback — ${candidate.role}`,
+      body: `Dear ${firstName},
+
+Thank you for dedicating significant time and energy to interview with our engineering panel for the ${candidate.role} opening.
+
+Our team was genuinely impressed by your technical depth and problem-solving approach. However, after careful deliberation across several strong candidates${reason ? `, and noting that ${reason}` : ''}, we have decided to proceed with another applicant whose specific expertise more closely aligns with our immediate architectural focus.
+
+We want to thank you for the thoughtful conversations and wish you continued success in your search. We will keep your profile active in our talent pool for future openings that match your skills.
+
+Best regards,
+${recruiterName}`,
+    };
+  }
+
+  if (stage === 'Screening') {
+    return {
+      subject: `Update on your application for ${candidate.role}`,
+      body: `Dear ${firstName},
+
+Thank you for taking the time to speak with us during the initial screening round for the ${candidate.role} position.
+
+At this stage, we have decided not to advance your application to the technical interview loop${reason ? ` due to ${reason}` : ''}. We appreciate the opportunity to learn about your achievements and the value you bring.
+
+We encourage you to monitor our careers page for future roles that align with your background.
+
+Sincerely,
+${recruiterName}`,
+    };
+  }
+
+  // Default Applied Stage
+  return {
+    subject: `Application update for ${candidate.role}`,
+    body: `Dear ${firstName},
+
+Thank you for your interest in joining our team and for submitting your application for the ${candidate.role} position.
+
+We received a high volume of accomplished applicants for this requisition. While your qualifications are noteworthy${reason ? `, ${reason}` : ''}, we have decided to proceed with other candidates whose profiles more directly match our current requirements.
+
+Thank you again for your time and interest in our organization.
+
+Best wishes,
+${recruiterName}`,
+  };
+}
+
 export const CandidateModal: React.FC<CandidateModalProps> = ({
   candidate,
   onClose,
@@ -41,6 +115,8 @@ export const CandidateModal: React.FC<CandidateModalProps> = ({
 }) => {
   const [rejectReason, setRejectReason] = useState('');
   const [isRejecting, setIsRejecting] = useState(false);
+  const [showEmailPreview, setShowEmailPreview] = useState(false);
+  const [copiedEmail, setCopiedEmail] = useState(false);
 
   if (!candidate) return null;
 
@@ -65,6 +141,16 @@ export const CandidateModal: React.FC<CandidateModalProps> = ({
     onReject(candidate, rejectReason.trim());
     setIsRejecting(false);
     setRejectReason('');
+    setShowEmailPreview(false);
+  };
+
+  const emailDraft = generateDeclineEmail(candidate, rejectReason.trim());
+
+  const handleCopyEmail = () => {
+    const fullText = `Subject: ${emailDraft.subject}\n\n${emailDraft.body}`;
+    navigator.clipboard.writeText(fullText);
+    setCopiedEmail(true);
+    setTimeout(() => setCopiedEmail(false), 2000);
   };
 
   return (
@@ -273,43 +359,95 @@ export const CandidateModal: React.FC<CandidateModalProps> = ({
           </div>
         </div>
 
-        {/* Rejection Prompt Form (if active) */}
+        {/* Rejection Prompt & Context-Aware Email Preview Drawer */}
         {isRejecting && (
           <div
             style={{
-              padding: '1rem 1.5rem',
+              padding: '1.25rem 1.5rem',
               background: 'rgba(244, 63, 94, 0.08)',
               borderTop: '1px solid rgba(244, 63, 94, 0.25)',
               display: 'flex',
               flexDirection: 'column',
-              gap: '0.65rem',
+              gap: '0.85rem',
             }}
           >
-            <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#fda4af' }}>
-              Confirm Rejection Reason (Required for Audit Trail):
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#fda4af' }}>
+                Confirm Rejection &amp; Audit Rationale
+              </div>
+
+              {/* Toggle Email Preview */}
+              <button
+                type="button"
+                className="btn-secondary"
+                style={{ fontSize: '0.76rem', padding: '0.25rem 0.65rem' }}
+                onClick={() => setShowEmailPreview(!showEmailPreview)}
+              >
+                <Eye size={13} />
+                <span>{showEmailPreview ? 'Hide Candidate Email' : 'Preview Polite Decline Email'}</span>
+              </button>
             </div>
-            <textarea
-              style={{
-                width: '100%',
-                background: 'var(--bg-surface)',
-                border: '1px solid rgba(244, 63, 94, 0.3)',
-                borderRadius: 'var(--radius-sm)',
-                padding: '0.5rem 0.75rem',
-                color: '#fff',
-                fontSize: '0.85rem',
-                minHeight: '60px',
-              }}
-              placeholder="e.g. Candidate accepted competing offer, or skills mismatch during panel..."
-              value={rejectReason}
-              onChange={(e) => setRejectReason(e.target.value)}
-              autoFocus
-            />
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>
+                Rejection Rationale (Permanently sealed in candidate audit log) *
+              </label>
+              <textarea
+                style={{
+                  width: '100%',
+                  background: 'var(--bg-surface)',
+                  border: '1px solid rgba(244, 63, 94, 0.3)',
+                  borderRadius: 'var(--radius-sm)',
+                  padding: '0.5rem 0.75rem',
+                  color: '#fff',
+                  fontSize: '0.85rem',
+                  minHeight: '60px',
+                }}
+                placeholder="e.g. Candidate accepted competing offer, or skills mismatch during panel..."
+                value={rejectReason}
+                onChange={(e) => setRejectReason(e.target.value)}
+                autoFocus
+              />
+            </div>
+
+            {/* Context-Aware Decline Email Preview (Feature 5) */}
+            {showEmailPreview && (
+              <div className="email-preview-card">
+                <div className="email-preview-header">
+                  <div>
+                    <div style={{ fontSize: '0.76rem', color: 'var(--text-dim)' }}>
+                      To: <strong>{candidate.name}</strong> &lt;{candidate.email}&gt;
+                    </div>
+                    <div style={{ fontSize: '0.78rem', color: '#fff', fontWeight: 600, marginTop: 2 }}>
+                      Subject: {emailDraft.subject}
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    style={{ fontSize: '0.74rem', padding: '0.25rem 0.55rem' }}
+                    onClick={handleCopyEmail}
+                    title="Copy full draft to clipboard"
+                  >
+                    {copiedEmail ? <Check size={13} style={{ color: '#10b981' }} /> : <Copy size={13} />}
+                    <span>{copiedEmail ? 'Copied!' : 'Copy Draft'}</span>
+                  </button>
+                </div>
+
+                <div className="email-preview-body">
+                  {emailDraft.body}
+                </div>
+              </div>
+            )}
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '0.25rem' }}>
               <button
                 className="btn-secondary"
                 onClick={() => {
                   setIsRejecting(false);
                   setRejectReason('');
+                  setShowEmailPreview(false);
                 }}
               >
                 Cancel
@@ -318,7 +456,7 @@ export const CandidateModal: React.FC<CandidateModalProps> = ({
                 style={{
                   background: 'var(--stage-rejected)',
                   color: '#fff',
-                  padding: '0.45rem 0.95rem',
+                  padding: '0.45rem 1rem',
                   borderRadius: 'var(--radius-sm)',
                   fontWeight: 600,
                   fontSize: '0.85rem',
